@@ -1,0 +1,35 @@
+{
+  "version": 2,
+  "builds": [
+    {
+      "src": "src/app.js",
+      "use": "@vercel/node"
+    }
+  ],
+  "routes": [
+    {
+      "src": "/api/producto",
+      "dest": "/src/routes/productoRoutes.js"
+    },
+    {
+      "src": "/api/productos",
+      "dest": "/src/routes/productoRoutes.js"
+    },
+    {
+      "src": "/api/producto/:id",
+      "dest": "/src/routes/productoRoutes.js"
+    },
+    {
+      "src": "/api/productos/categoria",
+      "dest": "/src/routes/productoRoutes.js"
+    },
+    {
+      "src": "/api/empleado",
+      "dest": "/src/routes/employeeRoutes.js"
+    },
+    {
+      "src": "/(.*)",
+      "dest": "/src/app.js"
+    }
+  ]
+}
