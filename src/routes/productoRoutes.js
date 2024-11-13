@@ -27,10 +27,7 @@ const upload = multer({ storage: storage });
 // Ruta para crear un nuevo producto
 router.post("/producto", upload.single("image"), productoController.crearProducto);
 // /routes/productoRoutes.js
-router.get("/productos", (req, res, next) => {
-  console.log("Ruta /productos fue llamada.");
-  next();  // Asegúrate de llamar al siguiente middleware
-}, productoController.obtenerProductos);
+router.get("/productos", productoController.obtenerProductos);
 
 // Ruta para crear un nuevo empleado
 router.get("/producto/:id", productoController.obtenerProductoPorId); // Obtener producto por ID

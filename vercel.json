@@ -8,24 +8,20 @@
   ],
   "routes": [
     {
-      "src": "/api/producto",
-      "dest": "/src/routes/productoRoutes.js"
-    },
-    {
       "src": "/api/productos",
-      "dest": "/src/routes/productoRoutes.js"
+      "dest": "/src/app.js"
     },
     {
       "src": "/api/producto/:id",
-      "dest": "/src/routes/productoRoutes.js"
+      "dest": "/src/app.js"
     },
     {
       "src": "/api/productos/categoria",
-      "dest": "/src/routes/productoRoutes.js"
+      "dest": "/src/app.js"
     },
     {
       "src": "/api/empleado",
-      "dest": "/src/routes/employeeRoutes.js"
+      "dest": "/src/app.js"
     },
     {
       "src": "/(.*)",
