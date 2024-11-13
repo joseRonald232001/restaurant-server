@@ -33,26 +33,24 @@ const uploadImageToCloudinary = async (imagePath, imageName) => {
 // Crear un nuevo producto
 const createProduct = async (productData, image) => {
   try {
-    // Subir la imagen a Cloudinary
-    const imageUrl = await uploadImageToCloudinary(image.path, image.originalname); // Pasamos el nombre original de la imagen
-
-    // Crear un ID único para el producto
+    // El archivo se sube automáticamente gracias a Multer y CloudinaryStorage
+    // Solo necesitas usar la URL proporcionada por multer (CloudinaryStorage)
     const productoId = uuidv4();
 
-    // Preparar los datos del producto con la URL de la imagen
     const productoData = {
       ...productData,
-      image: imageUrl, // URL de la imagen subida
+      image: image.path,  // 'image.path' es la URL proporcionada por CloudinaryStorage
     };
 
-    // Guardar el producto en Firestore
+    // Guardar en Firestore
     await db.collection("productos").doc(productoId).set(productoData);
 
-    return { productoId, ...productoData }; // Retorna el producto con el ID y la URL de la imagen
+    return { productoId, ...productoData };
   } catch (error) {
     throw new Error("Error creating product: " + error.message);
   }
 };
+
 
 // Obtener todos los productos
 const getAllProducts = async () => {
