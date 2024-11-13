@@ -10,17 +10,23 @@ cloudinary.config({
 });
 
 // Subir imagen a Cloudinary
-const uploadImageToCloudinary = async (imagePath) => {
+const uploadImageToCloudinary = async (imagePath, imageName) => {
   try {
+    // Generar un nombre único para la imagen
+    const uniqueName = `${Date.now()}-${imageName}`;
+
     const uploadResult = await cloudinary.uploader.upload(imagePath, {
+      public_id: uniqueName, // Usar un nombre único para evitar duplicación
       folder: "productos",
       transformation: [{ width: 500, height: 500, crop: "limit" }],
     });
+
     return uploadResult.secure_url;
   } catch (error) {
-    throw new Error("Error uploading image to Cloudinary");
+    throw new Error("Error uploading image to Cloudinary: " + error.message);
   }
 };
+
 
 // Crear un nuevo producto
 const createProduct = async (productData, image) => {
