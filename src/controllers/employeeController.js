@@ -1,59 +1,73 @@
 const employeeModel = require("../models/employeeModel");
 
 // Crear un nuevo empleado
-const createEmployee = async (req, res) => {
+const crearEmpleado = async (req, res) => {
   try {
-    const { name, qualityOfService } = req.body;
-    const image = req.file; // Imagen subida
-    
+    const { name, puntuacion } = req.body;
+    const image = req.file;
 
     if (!image) {
-      return res.status(400).json({ message: "An image is required for the employee" });
+      return res
+        .status(400)
+        .json({ mensaje: "Se requiere una imagen para el empleado" });
     }
 
-    const employeeData = {
+    // Crear los datos del empleado (sin la URL de la imagen)
+    const empleadoData = {
       name,
-      qualityOfService, // Calidad de atención (número decimal)
+      puntuacion: parseFloat(puntuacion),
     };
 
-    // Crear el empleado en el modelo
-    const newEmployee = await employeeModel.createEmployee(employeeData, image);
+    // Crear el empleado en el modelo, pasándole también la imagen
+    const nuevoEmpleado = await employeeModel.createEmployee(empleadoData, image);
 
-    res.status(201).json({ message: "Employee created successfully", employeeData: newEmployee });
+    // Responder con el empleado creado
+    res.status(201).json({
+      mensaje: "Empleado creado con éxito",
+      empleadoData: nuevoEmpleado,
+    });
   } catch (error) {
-    console.error("Error creating employee:", error);
-    res.status(500).json({ message: "Error creating employee" });
+    console.error("Error creando empleado:", error);
+    res.status(500).json({ mensaje: "Error creando empleado" });
   }
 };
 
 // Obtener todos los empleados
-const getAllEmployees = async (req, res) => {
+const obtenerEmpleados = async (req, res) => {
   try {
-    const employees = await employeeModel.getAllEmployees();
+    const empleados = await employeeModel.getAllEmployees();
 
-    if (employees.length === 0) {
-      return res.status(404).json({ message: "No employees available" });
+    if (empleados.length === 0) {
+      return res.status(404).json({ mensaje: "No hay empleados disponibles" });
     }
 
-    res.status(200).json(employees);
+    res.status(200).json(empleados);
   } catch (error) {
-    console.error("Error fetching employees:", error);
-    res.status(500).json({ message: "Error fetching employees" });
+    console.error("Error obteniendo empleados:", error);
+    res.status(500).json({ mensaje: "Error obteniendo empleados" });
   }
 };
 
 // Obtener un empleado por su ID
-const getEmployeeById = async (req, res) => {
+const obtenerEmpleadoPorId = async (req, res) => {
   try {
-    const { id } = req.params;
+    const { id } = req.params; // El ID del empleado se pasa como parámetro en la URL
 
-    const employee = await employeeModel.getEmployeeById(id);
+    const empleado = await employeeModel.getEmployeeById(id);
 
-    res.status(200).json(employee);
+    if (!empleado) {
+      return res.status(404).json({ mensaje: "Empleado no encontrado" });
+    }
+
+    res.status(200).json(empleado);
   } catch (error) {
-    console.error("Error fetching employee by ID:", error);
-    res.status(404).json({ message: "Employee not found" });
+    console.error("Error obteniendo empleado por ID:", error);
+    res.status(500).json({ mensaje: "Error obteniendo empleado por ID" });
   }
 };
 
-module.exports = { createEmployee, getAllEmployees, getEmployeeById };
+module.exports = {
+  crearEmpleado,
+  obtenerEmpleados,
+  obtenerEmpleadoPorId,
+};

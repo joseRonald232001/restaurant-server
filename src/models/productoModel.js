@@ -1,48 +1,14 @@
-const cloudinary = require("cloudinary").v2;
 const { v4: uuidv4 } = require("uuid");
 const db = require("../config/firebase");
 
-// Configurar Cloudinary
-cloudinary.config({
-  cloud_name: process.env.CLOUDINARY_CLOUD_NAME,
-  api_key: process.env.CLOUDINARY_API_KEY,
-  api_secret: process.env.CLOUDINARY_API_SECRET,
-});
-
-// Subir imagen a Cloudinary
-const uploadImageToCloudinary = async (imagePath, imageName) => {
-  try {
-    // Generar un nombre único para la imagen utilizando el nombre original
-    const uniqueName = `${Date.now()}-${imageName}`;
-
-    // Subir la imagen a Cloudinary
-    const uploadResult = await cloudinary.uploader.upload(imagePath, {
-      public_id: uniqueName, // Usar un nombre único para evitar duplicación
-      folder: "productos",   // Coloca la imagen en la carpeta 'productos' de Cloudinary
-      transformation: [{ width: 500, height: 500, crop: "limit" }],
-    });
-
-    console.log(uploadResult.secure_url);  // Verificar la URL generada
-
-    return uploadResult.secure_url; // Retorna la URL segura de la imagen
-  } catch (error) {
-    throw new Error("Error uploading image to Cloudinary: " + error.message);
-  }
-};
-
-// Crear un nuevo producto
+// Crear nuevo producto producto
 const createProduct = async (productData, image) => {
   try {
-    // El archivo se sube automáticamente gracias a Multer y CloudinaryStorage
-    // Solo necesitas usar la URL proporcionada por multer (CloudinaryStorage)
     const productoId = uuidv4();
-
     const productoData = {
       ...productData,
-      image: image.path,  // 'image.path' es la URL proporcionada por CloudinaryStorage
+      image: image.path, 
     };
-
-    // Guardar en Firestore
     await db.collection("productos").doc(productoId).set(productoData);
 
     return { productoId, ...productoData };
@@ -51,16 +17,16 @@ const createProduct = async (productData, image) => {
   }
 };
 
-
 // Obtener todos los productos
 const getAllProducts = async () => {
   try {
     const productosSnapshot = await db.collection("productos").get();
     const productos = [];
-    
+
     productosSnapshot.forEach((doc) => {
       productos.push({ id: doc.id, ...doc.data() });
     });
+    
 
     return productos;
   } catch (error) {
@@ -73,7 +39,7 @@ const getProductsByCategory = async (category) => {
   try {
     const productosSnapshot = await db
       .collection("productos")
-      .where("category", "==", category) // Filtrar por categoría
+      .where("category", "==", category) 
       .get();
 
     const productos = [];
@@ -102,4 +68,9 @@ const getProductById = async (id) => {
   }
 };
 
-module.exports = { createProduct, getAllProducts, getProductsByCategory, getProductById };
+module.exports = {
+  createProduct,
+  getAllProducts,
+  getProductsByCategory,
+  getProductById,
+};

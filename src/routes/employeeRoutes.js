@@ -1,37 +1,36 @@
 const express = require("express");
-const router = express.Router();
-const employeeController = require("../controllers/employeeController");
 const multer = require("multer");
 const { CloudinaryStorage } = require("multer-storage-cloudinary");
 const cloudinary = require("cloudinary").v2;
+const employeeController = require("../controllers/employeeController"); // Importa el controlador de empleados
+const router = express.Router();
 
-// Configuración de Cloudinary
+// Configuración de Cloudinary con las credenciales de tu archivo .env
 cloudinary.config({
   cloud_name: process.env.CLOUDINARY_CLOUD_NAME,
   api_key: process.env.CLOUDINARY_API_KEY,
   api_secret: process.env.CLOUDINARY_API_SECRET,
 });
 
-// Configuración del almacenamiento de Multer para Cloudinary
+// Configuración de almacenamiento en Cloudinary con multer
 const storage = new CloudinaryStorage({
   cloudinary: cloudinary,
   params: {
-    folder: 'employees', // Cambiar a la carpeta que prefieras
+    folder: 'your_folder', // Opcional: carpeta en Cloudinary
     allowed_formats: ['jpg', 'png', 'jpeg', 'webp'], // Formatos permitidos
-    transformation: [{ width: 500, height: 500, crop: 'limit' }] // Opcional: transformación de la imagen
+    transformation: [{ width: 500, height: 500, crop: 'limit' }] // Transformaciones opcionales
   }
 });
 
 const upload = multer({ storage: storage });
 
-
-// Crear un nuevo empleado
-router.post("/employee",upload.single("image"),employeeController.createEmployee);
+// Ruta para crear un nuevo empleado
+router.post("/empleado", upload.single("image"), employeeController.crearEmpleado);
 
 // Obtener todos los empleados
-router.get("/employees", employeeController.getAllEmployees);
+router.get("/empleados", employeeController.obtenerEmpleados);
 
 // Obtener un empleado por ID
-router.get("/employee/:id", employeeController.getEmployeeById);
+router.get("/empleado/:id", employeeController.obtenerEmpleadoPorId);
 
 module.exports = router;
