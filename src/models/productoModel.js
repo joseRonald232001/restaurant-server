@@ -12,42 +12,43 @@ cloudinary.config({
 // Subir imagen a Cloudinary
 const uploadImageToCloudinary = async (imagePath, imageName) => {
   try {
-    // Generar un nombre único para la imagen
+    // Generar un nombre único para la imagen utilizando el nombre original
     const uniqueName = `${Date.now()}-${imageName}`;
 
+    // Subir la imagen a Cloudinary
     const uploadResult = await cloudinary.uploader.upload(imagePath, {
       public_id: uniqueName, // Usar un nombre único para evitar duplicación
-      folder: "productos",
+      folder: "productos",   // Coloca la imagen en la carpeta 'productos' de Cloudinary
       transformation: [{ width: 500, height: 500, crop: "limit" }],
     });
 
-    console.log(uploadResult.secure_url);  // Asegúrate de verificar la URL generada
+    console.log(uploadResult.secure_url);  // Verificar la URL generada
 
-    return uploadResult.secure_url;
+    return uploadResult.secure_url; // Retorna la URL segura de la imagen
   } catch (error) {
     throw new Error("Error uploading image to Cloudinary: " + error.message);
   }
 };
 
-
 // Crear un nuevo producto
 const createProduct = async (productData, image) => {
   try {
-    // Subir la imagen
-    const imageUrl = await uploadImageToCloudinary(image.path);
+    // Subir la imagen a Cloudinary
+    const imageUrl = await uploadImageToCloudinary(image.path, image.originalname); // Pasamos el nombre original de la imagen
 
     // Crear un ID único para el producto
     const productoId = uuidv4();
 
+    // Preparar los datos del producto con la URL de la imagen
     const productoData = {
       ...productData,
       image: imageUrl, // URL de la imagen subida
     };
 
-    // Guardar en Firestore
+    // Guardar el producto en Firestore
     await db.collection("productos").doc(productoId).set(productoData);
 
-    return { productoId, ...productoData };
+    return { productoId, ...productoData }; // Retorna el producto con el ID y la URL de la imagen
   } catch (error) {
     throw new Error("Error creating product: " + error.message);
   }
@@ -68,7 +69,6 @@ const getAllProducts = async () => {
     throw new Error("Error fetching products: " + error.message);
   }
 };
-
 
 // Obtener productos por categoría
 const getProductsByCategory = async (category) => {

@@ -1,5 +1,7 @@
 const productoModel = require("../models/productoModel");
 
+
+
 // Crear un nuevo producto
 const crearProducto = async (req, res) => {
   try {
@@ -12,6 +14,7 @@ const crearProducto = async (req, res) => {
         .json({ mensaje: "Se requiere una imagen para el producto" });
     }
 
+    // Crear los datos del producto (sin la URL de la imagen)
     const productoData = {
       title,
       description,
@@ -20,18 +23,14 @@ const crearProducto = async (req, res) => {
       price: parseFloat(price),
     };
 
-    // Crear el producto en el modelo
-    const nuevoProducto = await productoModel.createProduct(
-      productoData,
-      image
-    );
+    // Crear el producto en el modelo, pasándole también la imagen
+    const nuevoProducto = await productoModel.createProduct(productoData, image);
 
-    res
-      .status(201)
-      .json({
-        mensaje: "Producto creado con éxito",
-        productoData: nuevoProducto,
-      });
+    // Responder con el producto creado
+    res.status(201).json({
+      mensaje: "Producto creado con éxito",
+      productoData: nuevoProducto,
+    });
   } catch (error) {
     console.error("Error creando producto:", error);
     res.status(500).json({ mensaje: "Error creando producto" });
