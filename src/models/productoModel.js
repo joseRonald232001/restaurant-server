@@ -21,6 +21,8 @@ const uploadImageToCloudinary = async (imagePath, imageName) => {
       transformation: [{ width: 500, height: 500, crop: "limit" }],
     });
 
+    console.log(uploadResult.secure_url);  // Asegúrate de verificar la URL generada
+
     return uploadResult.secure_url;
   } catch (error) {
     throw new Error("Error uploading image to Cloudinary: " + error.message);
